@@ -1,0 +1,654 @@
+
+<script>
+  window.articmaze = {{ shop.metafields.articmaze.settings.value | json }}
+  window.am_products = [];
+</script>
+
+{% comment %} {{ shop.metafields.articmaze.settings.value }} {% endcomment %}
+{% liquid
+  assign settings = shop.metafields.articmaze.settings.value
+  assign products = settings.products
+
+  assign appActivate = settings.appActivated
+%}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.css" />
+
+<style>
+  .articmaze-page-width{
+    max-width: 1200px;
+    margin: auto;
+  }
+
+  .articmaze-header {
+    text-align: center;
+    box-sizing: border-box;
+    padding: 27px 0;
+
+    h2{
+      margin: 0;
+    }
+    p{
+      margin: 0;
+    }
+  }
+  articmaze-element{
+    .articmaze-input-wrapper{
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      justify-content: center;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      position: sticky;
+      top: 20px;
+      gap: 45px;
+    }
+
+    .articmaze-products {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) minmax(0,1.5fr);
+      grid-gap: 100px;
+      align-items: start;
+    }
+
+    .articmaze-media-warpper {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+      grid-column-gap: 18px;
+      grid-row-gap: 35px;
+
+      .articmaze-media {
+        img {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1;
+            object-fit: cover;
+        }
+        p{
+          margin: 0;
+        }
+      }
+    }
+
+    .marticmaze-input-box {
+      width: 100%;
+    }
+
+    select, input{
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px 10px;
+      border: 2px solid gray;
+      border-radius: 5px;
+      font-size: 16px;
+      outline: none;
+      min-width: 100%;
+      border: 1px solid rgba(61, 66, 70, .1);
+      border-radius: 2px;
+      padding: 14px 30px 14px 14px;
+      text-overflow: ellipsis;
+    }
+
+    select{
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-position: right center;
+      background-image: url(//ostersjosten.se/cdn/shop/t/29/assets/chevron-down.svg?v=38601799495328940771724918076);
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      background-size: 18px;
+      line-height: 1.2;
+      text-indent: .01px;
+      text-overflow: "";
+      cursor: pointer;
+    }
+
+    .articmaze-qty-price {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    articmaze-qty{
+      display: grid;
+      grid-template-columns: 40px 1fr 40px;
+      grid-template-rows: 48px;
+      width: 150px;
+      box-sizing: border-box;
+      border: 1px solid rgba(61, 66, 70, .1);
+
+      button{
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        background: transparent;
+      }
+
+      input{
+        border-block: none;
+        border-radius: 0px;
+        text-align: center;
+        background: transparent;
+        border: none;
+        padding: 0;
+      }
+
+      input:focus-visible {
+        outline: none;
+        outline-offset: unset;
+        box-shadow: none;
+      }
+
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      input[type=number] {
+        -moz-appearance: textfield;
+      }
+    }
+
+    .articmaze-add-to-cart {
+      display: inline-block;
+      line-height: 1.4;
+      vertical-align: text-top;
+      white-space: normal;
+      min-height: 44px;
+      border-radius: 0;
+      border: none;
+      color: #000;
+      background-color: #fcb958;
+      text-align: center;
+      padding: 16px;
+      text-decoration: none;
+      margin: 0;
+      width: 100%;
+      cursor: pointer;
+    }
+    .articmaze-add-to-cart:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .articmaze-price-wrapper {
+      display: flex;
+      height: 100%;
+      flex-direction: column;
+      gap: 2px;
+
+      .articmaze-price {
+        margin: 0;
+        line-height: 1;
+      }
+      label{
+        line-height: 1;
+      }
+    }
+
+    .articmaze-footer-text{
+      text-align: center;
+      font-size: 13px;
+      margin-top: 35px;
+    }
+
+    .articmaze-cart-error {
+      color: red;
+      font-size: 14px;
+    }
+
+    .articmaze-swiper {
+      width: 100% !important;
+    }
+  }
+</style>
+
+
+
+<div class="articmaze-page-width">
+  <div class="articmaze-header">
+    <h2>Fantastiska</h2>
+    <p>Matcha ditt golv och väggar med måttbeställda fönsterbrädor och socklar i vår fantastiska natursten!</p>
+  </div>
+  <articmaze-element>
+    <div class="articmaze-container">
+      <div class="articmaze-products">
+        <div class="articmaze-input-wrapper">
+          <div class="marticmaze-input-box">
+            <label>Fönsterbräda</label>
+            <select class="articmaze-products-select acticmaze-firstStep">
+              <option value="">Välj sten</option>
+              {% for product in products %}
+                <option value="{{ product.productId }}">{{ product.title }}</option>
+              {% endfor %}
+            </select>
+            <small>Skivorna är 20 mm tjocka och slipade och fasade i framkant.</small>
+          </div>
+          <div class="marticmaze-input-box">
+            <label>Längd (anges i mm)</label>
+            <input
+              placeholder="Ange fönsterbrädans längd"
+              type="number"
+              class="articmaze-length-input acticmaze-secondStep"
+            >
+          </div>
+          <div class="marticmaze-input-box">
+            <label>Bredd (anges i mm)</label>
+            <input
+              placeholder="Ange fönsterbrädans bredd"
+              type="number"
+              class="articmaze-width-input acticmaze-thirdStep"
+            >
+          </div>
+
+          <div class="articmaze-qty-price">
+            <div class="articmaze-qty-wrapper">
+              <label>Styck</label>
+              <articmaze-qty>
+                <button>-</button>
+                <input type="number" min="1" step="1" value="1">
+                <button>+</button>
+              </articmaze-qty>
+            </div>
+            <div class="articmaze-price-wrapper">
+              <h3 class="articmaze-price">0 kr</h3>
+              <label>Inkl. moms</label>
+            </div>
+          </div>
+
+          <div>
+            <button class="articmaze-add-to-cart acticmaze-fouthStep" type="button">Lägg till varukorg</button>
+            <small class="articmaze-cart-error"></small>
+            <p class="articmaze-footer-text">
+              Produktion och leverans inom 10 veckor till hela Sverige. Standard frakt inom Sverige från 1.500 kr.
+              Frakten beräknas i kassan.
+            </p>
+          </div>
+        </div>
+        <div class="articmaze-media-warpper">
+          {% for product in products %}
+            {% assign p = all_products[product.handle] %}
+            <script>
+              am_products.push({{p | json}})
+            </script>
+            <div class="swiper articmaze-swiper am-swiper-{{ forloop.index }}">
+              <div class="swiper-wrapper">
+                {% for media in p.media %}
+                  <div class="swiper-slide articmaze-media">
+                    {{ media | image_url: width: 500 | image_tag }}
+                    <p>{{ p.title }}</p>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+            
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </articmaze-element>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.js" defer="defer"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", e => {
+    {% for product in products %}
+      new Swiper(".am-swiper-{{ forloop.index }}", {
+        slidesPerView: 1,
+        spaceBetween: 0,
+      })
+    {% endfor %}
+  })
+  
+  class ArticMaze extends HTMLElement{
+    constructor() {
+      super()
+      this.settings = {{ shop.metafields.articmaze.settings.value | json }};
+      
+      this.productSelect = this.querySelector(".articmaze-products-select")
+      this.lengthInput = this.querySelector(".articmaze-length-input")
+      this.widthInput = this.querySelector(".articmaze-width-input")
+      this.priceEl = this.querySelector(".articmaze-price")
+      this.addToCartBtn = this.querySelector(".articmaze-add-to-cart")
+      this.errorEl = this.querySelector(".articmaze-cart-error")
+      
+      this.disabledConfig = {
+        firstStep: false,
+        secondStep: true,
+        thirdStep: true,
+        fouthStep: true
+      }
+
+      this.product_id = "";
+      this.lMin = 0;
+      this.lMax = 0;
+      this.length = 0;
+      this.length_option = ""
+      this.width = 0;
+      this.width_option = ""
+      this.wMin = 0;
+      this.wMax = 0;
+      this.price_pm = 0;
+      this.price = 0;
+
+      this.product = null;
+    }
+
+    connectedCallback() {
+      this.productSelect.addEventListener("input", this.handleProductSelect.bind(this))
+      this.lengthInput.addEventListener("input", this.handleLengthSelect.bind(this))
+      this.lengthInput.addEventListener("click", this.handleLengthSelectInit.bind(this))
+      this.widthInput.addEventListener("input", this.handleWidthSelect.bind(this))
+      this.widthInput.addEventListener("click", this.handleWidthSelectInit.bind(this))
+      this.addToCartBtn.addEventListener("click", this.handleAddToCartBtn.bind(this))
+      this.handleDisabledConfig()
+    }
+
+    handleProductSelect(e) {
+      this.errorEl.innerHTML = ""
+      const productId = e.target.value || ""
+      
+      let product = this.settings?.products?.find(product => product.productId === productId)
+      
+      if(product) {
+        this.product = product;
+        this.product_id = product.productId;
+        this.price_pm = parseFloat(product.price);
+        this.wMin = parseInt(product.widthMin)
+        this.wMax = parseInt(product.widthMax)
+        this.lMin = parseInt(product.lengthMin)
+        this.lMax = parseInt(product.lengthMax)
+        this.length_option = product.lengthOption
+        this.width_option = product.widthOption
+
+        this.lengthInput.min = this.lMin
+        this.lengthInput.max = this.lMax
+        this.lengthInput.value = ""
+        this.lengthInput.stem = 1
+        
+        this.widthInput.min = this.wMin
+        this.widthInput.max = this.wMax
+        this.widthInput.value = ""
+        this.widthInput.stem = 1
+
+        this.disabledConfig = {
+          firstStep: false,
+          secondStep: false,
+          thirdStep: true,
+          fouthStep: true
+        }
+      } else {
+        this.wMin = 0
+        this.wMax = 0
+        this.lMin = 0
+        this.lMax = 0
+        
+        this.lengthInput.value = ""
+        this.widthInput.value = ""
+
+        this.disabledConfig = {
+          firstStep: false,
+          secondStep: true,
+          thirdStep: true,
+          fouthStep: true
+        }
+      }
+      this.handleDisabledConfig()
+    }
+
+    handleLengthSelectInit(e) {
+      if(e.target.value === "" || e.target.value === null) {
+        e.target.value = this.lMin;
+        this.length = this.lMin;
+        this.disabledConfig = {
+          firstStep: false,
+          secondStep: false,
+          thirdStep: false,
+          fouthStep: this.disabledConfig.fouthStep === true ? true: false
+        }
+        this.handleDisabledConfig()
+      }
+    }
+    
+    handleWidthSelectInit(e) {      
+      if(e.target.value === "" || e.target.value === null) {
+        e.target.value = this.wMin;
+        this.width = this.wMin;
+        
+        this.disabledConfig = {
+          firstStep: false,
+          secondStep: false,
+          thirdStep: false,
+          fouthStep: false
+        }
+        
+        this.handleDisabledConfig()
+      }
+    }
+
+    handleLengthSelect(e) {
+      let el = e.target
+      let value = parseInt(el.value);
+      this.length = value
+
+      if(value < this.lMin || value > this.lMax) {
+        this.disabledConfig = {
+          firstStep: false,
+          secondStep: false,
+          thirdStep: true,
+          fouthStep: true
+        }
+      } else {
+        this.disabledConfig = {
+          firstStep: false,
+          secondStep: false,
+          thirdStep: false,
+          fouthStep: false
+        }
+      }
+      this.handleDisabledConfig()
+    }
+    
+    handleWidthSelect(e) {
+      let el = e.target
+      let value = parseInt(el.value);
+      this.width = value
+
+      if(value < this.wMin || value > this.wMax) {
+        this.disabledConfig = {
+          firstStep: false,
+          secondStep: false,
+          thirdStep: false,
+          fouthStep: true
+        }
+      } else {
+        this.disabledConfig = {
+          firstStep: false,
+          secondStep: false,
+          thirdStep: false,
+          fouthStep: false
+        }
+      }
+      this.handleDisabledConfig()
+    }
+
+    handleAddToCartBtn(e) {
+      this.addToCartBtn.setAttribute("disabled", true)
+      this.addToCartBtn.style.cursor = 'wait'
+      
+      let iterable = Object.entries(this.disabledConfig)
+      let isDisabled = iterable?.some(step => {
+        return step[1] === true
+      })
+
+      if(isDisabled) return;
+
+      this.checkVariantIsExists();
+    }
+
+    checkVariantIsExists() {
+      let product = am_products.find(p => p.handle === this.product.handle)
+      let data = [
+        {
+          option: this.length_option,
+          value: this.length
+        },
+        {
+          option: this.width_option,
+          value: this.width
+        }
+      ];
+      
+      let options = product.options
+      let optionsData = new Array(options.length);
+
+      options?.map((option, index) => {
+        let d = data.find(o => o.option === option)
+        if(d) optionsData[index] = d.value + "mm"
+      })
+
+      let variant = product?.variants?.find(v => v.options.toString() === optionsData.toString())
+      
+      if(variant && variant.id) {
+        this.newVariantAddToCart(variant.id)
+      } else {
+        this.newVariantCreate()
+      }
+    }
+
+    newVariantCreate() {
+      const data = {
+        shop: Shopify.shop,
+        productId: this.product_id,
+        lengthOption: this.length_option,
+        widthOption: this.width_option,
+        price: this.price,
+        lengthValue: this.length + 'mm',
+        widthValue: this.width + 'mm'
+      }
+      
+      let prevThis = this;
+      fetch(articmaze.appUrl+"/api/articmaze", {
+        method: 'POST',
+          herader: {
+            'Content-Type': 'application/json',
+            "Access-Control-Allow-Origin": "*"
+          },
+          body: JSON.stringify(data)
+        
+      })
+      .then(res => res.json())
+      .then(res => {
+        if(res.data && res.data.length > 0) {
+          let variantGid = res.data[0].id;
+          let variantId = variantGid.replace("gid://shopify/ProductVariant/","");
+          console.log("variant id", variantId)
+          prevThis.newVariantAddToCart(variantId)
+        }
+        if(res.errors && res.errors.length > 0){
+          console.log("error", res.errors[0].message)
+          this.errorEl.innerHTML = res.errors[0]?.message
+        }
+        
+        this.addToCartBtn.removeAttribute("disabled")
+        this.addToCartBtn.style.cursor = 'pointer'
+        // console.log("res", res)
+      })
+      .catch(res => {
+        console.log("err", res)
+      })
+    }
+
+    newVariantAddToCart(variantId) {
+      let qty = parseInt(this.querySelector("articmaze-qty input").value) || 1;
+      console.log("quantity: ",qty)
+      let formData = {
+       'items': [{
+        'id': variantId,
+        'quantity': qty
+        }]
+      };
+      fetch(window.Shopify.routes.root + 'cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+      .then(response => {
+        return response.json();
+      })
+      .then(response => {
+        location.href = '/cart'
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      })
+    }
+
+    handleDisabledConfig() {
+      let smm = this.length * this.width;
+      let calc = smm / 1000000;
+      let price = this.price_pm * calc
+      this.price = price.toFixed(2)
+
+      this.priceEl.innerHTML = `${this.price} kr`
+      
+      let iterable = Object.entries(this.disabledConfig)
+      iterable?.map(step => {
+        let el = document.querySelector(`.acticmaze-${step[0]}`)
+        if(el) {
+          if(step[1] === true) el.setAttribute("disabled", step[1])
+          else el.removeAttribute("disabled")
+        }
+      })
+      // console.log("price", price)
+      // console.log("iterable", iterable)
+    }
+  }
+
+  customElements.define("articmaze-element", ArticMaze)
+
+
+  class ArticMazeQty extends HTMLElement{
+    constructor() {
+      super()
+
+      this.buttons = this.querySelectorAll("button")
+      this.input = this.querySelector("input")
+
+      this.buttons.forEach((button, index) => {
+        button.addEventListener("click", this.handleIncDec.bind(this, index === 0 ? -1 : 1))
+      })
+
+      this.input.addEventListener("input", e => {
+        let el = e.target;
+        let value = Math.abs(parseInt(el.value))
+        value < 1 ? value = 1 : value
+      })
+    }
+
+    handleIncDec(...rest) {
+      let [value, event] = rest
+      
+      this.input.value = Math.abs(parseInt(this.input.value) + value) < 1 ? 1 : Math.abs(parseInt(this.input.value)) + value
+    }
+  }
+  customElements.define("articmaze-qty", ArticMazeQty)
+</script>
+
+
+{% schema %}
+{
+  "name": "Product Customization",
+  "target": "section",
+  "settings": [
+    
+  ]
+}
+{% endschema %}
+

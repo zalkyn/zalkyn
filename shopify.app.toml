@@ -1,0 +1,42 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "71f96ffc3bd9a01e90f5c45f7c611966"
+name = "customize-product"
+handle = "customize-product-8"
+application_url = "https://decided-kinase-doubt-concerns.trycloudflare.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "ostersjosten-app.myshopify.com"
+include_config_on_deploy = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "write_products"
+
+[auth]
+redirect_urls = [
+  "https://feels-distinction-personals-np.trycloudflare.com/auth/callback",
+  "https://feels-distinction-personals-np.trycloudflare.com/auth/shopify/callback",
+  "https://feels-distinction-personals-np.trycloudflare.com/api/auth/callback",
+  "https://deemed-creation-lu-say.trycloudflare.com/auth/callback",
+  "https://deemed-creation-lu-say.trycloudflare.com/auth/shopify/callback",
+  "https://deemed-creation-lu-say.trycloudflare.com/api/auth/callback",
+  "https://flesh-wrong-rr-fr.trycloudflare.com/auth/callback",
+  "https://flesh-wrong-rr-fr.trycloudflare.com/auth/shopify/callback",
+  "https://flesh-wrong-rr-fr.trycloudflare.com/api/auth/callback",
+  "https://decided-kinase-doubt-concerns.trycloudflare.com/auth/callback",
+  "https://decided-kinase-doubt-concerns.trycloudflare.com/auth/shopify/callback",
+  "https://decided-kinase-doubt-concerns.trycloudflare.com/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2024-10"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/uninstalled" ]
+  uri = "/webhooks/app/uninstalled"
+
+[pos]
+embedded = false

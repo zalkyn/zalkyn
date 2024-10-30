@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Note that some adapters may set a maximum length for the String type by default, please ensure your strings are long
+// enough when changing adapters.
+// See https://www.prisma.io/docs/orm/reference/prisma-schema-reference#string for more information
+datasource db {
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model Session {
+  id            String    @id
+  shop          String    @unique
+  state         String
+  isOnline      Boolean   @default(false)
+  scope         String?
+  expires       DateTime?
+  accessToken   String
+  userId        BigInt?
+  shopId        String?
+  firstName     String?
+  lastName      String?
+  email         String?
+  accountOwner  Boolean   @default(false)
+  locale        String?
+  collaborator  Boolean?  @default(false)
+  emailVerified Boolean?  @default(false)
+}
+
+model Product {
+  id           Int       @id @default(autoincrement())
+  productId    String?   @unique
+  shopId       String?
+  title        String?
+  handle       String?
+  email        String?
+  price        String?   @default("0")
+  lengthMin    String?   @default("0")
+  lengthMax    String?   @default("0")
+  lengthOption String?   @default("Length")
+  widthMin     String?   @default("0")
+  widthMax     String?   @default("0")
+  widthOption  String?   @default("Width")
+  status       Boolean?  @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime? @updatedAt
+}
+
+model Settings {
+  id           Int      @id @default(autoincrement())
+  shop         String   @unique
+  appActivated Boolean  @default(false)
+  settings     Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
